@@ -1,29 +1,24 @@
-import os
+import streamlit as st
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
-import streamlit as st
+from agent.persona import get_persona_prompt
 
-# Load API Key secara Secure dari Streamlit Secrets
+# Load API Key securely
 openai_api_key = st.secrets["OPENAI_API_KEY"]
 
 # Function utama untuk dapatkan jawapan Dating Coach
-def dating_coach_response(user_input):
+def dating_coach_response(user_input, selected_persona):
     llm = ChatOpenAI(
         model="gpt-4o",
-        temperature=0.7,  # ➔ Friendly, kreatif sikit
+        temperature=0.7,  # ➔ Friendly & kreatif sikit
         openai_api_key=openai_api_key
     )
 
-    # Setup Persona AI Coach Hafizi
+    # Setup Persona ikut pilihan user
+    persona_prompt = get_persona_prompt(selected_persona)
+
     system_prompt = SystemMessage(
-        content=(
-            "Anda adalah Hafizi, seorang AI Dating Coach yang sangat berpengalaman dalam membantu individu "
-            "yang pemalu atau pernah gagal dalam hubungan. "
-            "Anda bercakap dengan gaya yang tenang, penuh empati, mesra, dan sedikit humor untuk membuatkan user rasa selesa. "
-            "Jawapan anda mestilah penuh dengan contoh praktikal, bukan sekadar teori. "
-            "Selalu beri semangat kepada user untuk teruskan usaha walaupun mereka gagal sebelum ini. "
-            "Jika perlu, gunakan gaya motivasi dan sedikit humor untuk menaikkan semangat user."
-        )
+        content=persona_prompt
     )
 
     messages = [
@@ -31,6 +26,5 @@ def dating_coach_response(user_input):
         HumanMessage(content=user_input)
     ]
 
-    # Dapatkan response dari LLM
     response = llm.invoke(messages)
     return response.content
