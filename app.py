@@ -4,8 +4,8 @@ from agent.memory import get_user_history
 
 st.set_page_config(page_title=" berborak dengan Hafizi", page_icon="💖")
 
-st.title("💖 Berborak dengan Hafizi 💖")
-st.caption("Bercakap dengan AI Dating Coach yang memahami anda!")
+st.title(" Berborak dengan Hafizi ")
+st.caption("Bercakap dengan AI Fizi  yang memahami anda!")
 
 # Session state initialization
 if "messages" not in st.session_state:
