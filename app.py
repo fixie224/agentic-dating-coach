@@ -21,7 +21,8 @@ if "onboard_complete" not in st.session_state:
 if not st.session_state.onboard_complete:
     st.subheader("Kenali Anda Dulu")
     st.session_state.user_name = st.text_input("Nama anda?", value=st.session_state.user_name)
-    st.session_state.main_issue = st.text_input("Masalah hubungan anda?", value=st.session_state.main_issue)
+    st.session_state.main_issue = st.text_input("ok nak borak pasal apa ni?", value=st.session_state.main_issue)
+
     if st.session_state.user_name and st.session_state.main_issue:
         if st.button("Mula Chat"):
             st.session_state.onboard_complete = True
