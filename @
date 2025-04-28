@@ -1,0 +1,31 @@
+import json
+import os
+
+# Path untuk simpan database memory
+DB_PATH = "agentic_database/user_progress.json"
+
+def load_progress():
+    """Load user progress dari file"""
+    if not os.path.exists(DB_PATH):
+        return {}
+    with open(DB_PATH, "r") as f:
+        return json.load(f)
+
+def save_progress(progress):
+    """Save user progress ke file"""
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+    with open(DB_PATH, "w") as f:
+        json.dump(progress, f, indent=2)
+
+def update_user_mood(user_name, mood):
+    """Update mood history untuk user"""
+    progress = load_progress()
+    if user_name not in progress:
+        progress[user_name] = {"moods": []}
+    progress[user_name]["moods"].append(mood)
+    save_progress(progress)
+
+def get_user_history(user_name):
+    """Get mood history untuk user"""
+    progress = load_progress()
+    return progress.get(user_name, {"moods": []})

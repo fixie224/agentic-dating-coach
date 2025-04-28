@@ -1,9 +1,11 @@
 # agent/coach.py
+
 import streamlit as st
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 from agent.persona import get_persona_prompt
 from agent.mood import detect_mood
+from agent.memory import update_user_mood, get_user_history, analyze_user_emotional_trend
 
 openai_api_key = st.secrets["OPENAI_API_KEY"]
 
@@ -16,21 +18,33 @@ def dating_coach_response(user_input: str) -> str:
 
     # Mood detection
     mood = detect_mood(user_input)
+    update_user_mood(mood)
+
+    # Emotional trend analysis
+    trend = analyze_user_emotional_trend()
 
     system_prompt = get_persona_prompt()
 
     mood_instruction = ""
-    if mood == "sad":
+
+    if trend == "sad":
         mood_instruction = (
-            "User sedang bersedih. Jawab dengan perlahan, banyakkan perkataan yang comforting, dan berikan sokongan emosi."
+            "Secara keseluruhan, user sering dalam mood sedih. "
+            "Jawab dengan penuh empati, perlahan, dan pastikan beri semangat untuk memperbaiki keyakinan diri user."
         )
-    elif mood == "happy":
+    elif trend == "happy":
         mood_instruction = (
-            "User sedang gembira. Jawab dengan lebih bertenaga, cepat, dan ringan."
+            "Secara keseluruhan, user biasanya ceria. "
+            "Jawab dengan ringan, penuh semangat, dan encourage positivity."
         )
-    elif mood == "angry":
+    elif trend == "angry":
         mood_instruction = (
-            "User sedang marah atau geram. Jawab dengan tenang, cuba tenangkan perasaan user dan bagi nasihat neutral."
+            "Secara keseluruhan, user kerap marah/tegang. "
+            "Jawab dengan penuh ketenangan, stabilkan emosi user tanpa menghakimi."
+        )
+    else:
+        mood_instruction = (
+            "User dalam mood neutral. Jawab dengan gaya normal mesra dan profesional."
         )
 
     messages = [

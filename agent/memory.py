@@ -1,22 +1,13 @@
-# agent/memory.py
+import streamlit as st
+from agent.mood import detect_mood
 
-import pickle
-import os
+def update_user_mood(user_input: str):
+    mood = detect_mood(user_input)
+    if "user_mood_history" not in st.session_state:
+        st.session_state.user_mood_history = []
+    st.session_state.user_mood_history.append(mood)
 
-MEMORY_FILE = "user_memory.pkl"
-
-def save_memory(data):
-    with open(MEMORY_FILE, "wb") as f:
-        pickle.dump(data, f)
-
-def load_memory():
-    if os.path.exists(MEMORY_FILE):
-        with open(MEMORY_FILE, "rb") as f:
-            return pickle.load(f)
-    else:
-        return {
-            "user_name": "",
-            "main_issue": "",
-            "messages": [],
-            "onboard_complete": False
-        }
+def get_user_history():
+    if "user_mood_history" in st.session_state:
+        return st.session_state.user_mood_history
+    return []
